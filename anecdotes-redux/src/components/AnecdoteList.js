@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { vote } from '../reducers/anecdoteReducer'
+import { incVote } from '../reducers/anecdoteReducer'
+import { voteRecorded, clearOnTimeout } from '../reducers/notificationReducer'
 
 const Anecdote = ({ anecdote, incVote }) => {
+  //const dispatch = useDispatch()
+  //console.log('Anecdote', anecdote)
   return (
     <div key={anecdote.id}>
       <div>
@@ -9,7 +12,7 @@ const Anecdote = ({ anecdote, incVote }) => {
       </div>
       <div>
         has {anecdote.votes} votes
-        <button onClick={() => incVote(anecdote.id)}>vote</button>
+        <button onClick={incVote}>vote</button>
       </div>
     </div>
   )
@@ -17,17 +20,24 @@ const Anecdote = ({ anecdote, incVote }) => {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
-  const anecdotes = useSelector(state => state)
+  const anecdotes = useSelector(state => state.anecdotes)
+  console.log('AnecdoteList', anecdotes)
   return (
     <>
-      <h2>AnecdoteList</h2>
-      {anecdotes
+      <h2>Anecdote List</h2>
+      {[ ...anecdotes ]
         .sort((a,b) => b.votes - a.votes)
         .map(anecdote =>
           <Anecdote 
             key={anecdote.id}
             anecdote={anecdote}
-            incVote = { ()=> dispatch(vote(anecdote.id)) }
+            incVote={ ()=> {
+              dispatch(incVote(anecdote.id)) 
+              dispatch(voteRecorded(anecdote.content))
+              setTimeout(() => {
+                dispatch(clearOnTimeout())
+              }, 5000)
+            }}
           />       
         )}
     </>
