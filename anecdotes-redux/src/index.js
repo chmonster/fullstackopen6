@@ -6,6 +6,7 @@ import App from './App'
 
 import anecdoteReducer from './reducers/anecdoteReducer'
 import notificationReducer from './reducers/notificationReducer'
+//import anecdoteService from './services.anecdotes'
 
 const store = configureStore({
   reducer: {
@@ -13,8 +14,7 @@ const store = configureStore({
     notification: notificationReducer
   }
 })
-
-console.log('index:', store.getState())
+//console.log('index:', store.getState())
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
