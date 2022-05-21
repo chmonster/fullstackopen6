@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = null
 
+let timeoutID = null
+
 const notificationSlice = createSlice({
   name: 'notification',
   initialState,
@@ -25,16 +27,19 @@ export const { anecdoteCreated, voteRecorded, clearOnTimeout } = notificationSli
 export const setAnecdoteNotification = (content, duration) =>  {
   return dispatch => {
     dispatch(anecdoteCreated(content))
-    setTimeout(() => {
+    timeoutID = setTimeout(() => {
       dispatch(clearOnTimeout())
     }, duration*1000)
   }
 }
 
-export const setVoteNotification = (content, duration) =>  {
+export const setVoteNotification = (content, duration) =>  { 
   return dispatch => {
     dispatch(voteRecorded(content))
-    setTimeout(() => {
+    if(timeoutID){
+      clearTimeout(timeoutID)
+    }
+    timeoutID = setTimeout(() => {
       dispatch(clearOnTimeout())
     }, duration*1000)
   }
