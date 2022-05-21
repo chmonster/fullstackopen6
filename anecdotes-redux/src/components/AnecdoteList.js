@@ -1,17 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { incVote } from '../reducers/anecdoteReducer'
-import { voteRecorded, clearOnTimeout } from '../reducers/notificationReducer'
+import { setVoteNotification } from '../reducers/notificationReducer'
 
-const Anecdote = ({ anecdote, incVote }) => {
-  //const dispatch = useDispatch()
-  //console.log('Anecdote', anecdote)
+const Anecdote = ({ content, votes, incVote }) => {
   return (
-    <div key={anecdote.id}>
+    <div>
       <div>
-        {anecdote.content}
+        {content}
       </div>
       <div>
-        has {anecdote.votes} votes
+        has {votes} votes
         <button onClick={incVote}>vote</button>
       </div>
     </div>
@@ -20,30 +18,36 @@ const Anecdote = ({ anecdote, incVote }) => {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
-  const anecdotes = useSelector(state => 
-    state.anecdotes.unfiltered.filter(anecdote => (
-      anecdote.content.toLowerCase().includes(state.anecdotes.filter.toLowerCase())
-    ))
-  )
-  console.log('AnecdoteList', anecdotes)
+
+  const anecdotesFiltered = useSelector (({ filterString, anecdotes }) => { 
+    console.log('filter', filterString, 'anecdotes', anecdotes)
+    if (filterString !== '') {
+      return anecdotes.filter(anecdote => 
+        anecdote.content.toLowerCase().includes(filterString.toLowerCase())
+      )
+    } else {
+      return anecdotes
+    }
+  })
+
+  console.log('anecdotesFiltered', anecdotesFiltered)
   return (
     <>
       <h2>Anecdote List</h2>
-      {[ ...anecdotes]
+      {[...anecdotesFiltered]
         .sort((a,b) => b.votes - a.votes)
         .map(anecdote =>
           <Anecdote 
             key={anecdote.id}
-            anecdote={anecdote}
+            content={anecdote.content}
+            votes={anecdote.votes}
             incVote={ ()=> {
               dispatch(incVote(anecdote.id)) 
-              dispatch(voteRecorded(anecdote.content))
-              setTimeout(() => {
-                dispatch(clearOnTimeout())
-              }, 5000)
+              dispatch(setVoteNotification(anecdote.content, 3))
             }}
           />       
-        )}
+        )
+      }
     </>
   )
 }

@@ -21,4 +21,23 @@ const notificationSlice = createSlice({
 })
 
 export const { anecdoteCreated, voteRecorded, clearOnTimeout } = notificationSlice.actions
+
+export const setAnecdoteNotification = (content, duration) =>  {
+  return dispatch => {
+    dispatch(anecdoteCreated(content))
+    setTimeout(() => {
+      dispatch(clearOnTimeout())
+    }, duration*1000)
+  }
+}
+
+export const setVoteNotification = (content, duration) =>  {
+  return dispatch => {
+    dispatch(voteRecorded(content))
+    setTimeout(() => {
+      dispatch(clearOnTimeout())
+    }, duration*1000)
+  }
+}
+
 export default notificationSlice.reducer
