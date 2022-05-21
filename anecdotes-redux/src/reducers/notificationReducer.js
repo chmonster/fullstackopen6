@@ -37,6 +37,7 @@ export const setVoteNotification = (content, duration) =>  {
   return dispatch => {
     dispatch(voteRecorded(content))
     if(timeoutID){
+      console.log('timeoutID', timeoutID)
       clearTimeout(timeoutID)
     }
     timeoutID = setTimeout(() => {
